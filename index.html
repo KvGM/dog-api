@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./style/style.css">
+    <title>Dog API</title>
+</head>
+
+<body>
+    <header>
+        <h2>Dog API Client</h2>
+    </header>
+    <form action="#">
+        <div id="consulta">
+            <div class="tipoConsulta">
+                <label for="xml"><input type="radio" name="opcion" id="xml">XMLHttpRequest</label>
+            </div>
+            <div class="tipoConsulta">
+                <label for="fetch"><input type="radio" name="opcion" id="fetch">Fetch</label>
+            </div>
+            <div class="tipoConsulta">
+                <label for="jquery"><input type="radio" name="opcion" id="jquery">Jquery</label>
+            </div>
+        </div>
+        <div id="selectBusqueda">
+
+        </div>
+        <div id="resultado">
+
+        </div>
+
+    </form>
+    <script type="module" src="./js/script.js"></script>
+</body>
+
+</html>
