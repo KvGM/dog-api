@@ -83,13 +83,13 @@ function crearSelect(json, metodo) {
     for (let [key, value] of lista) {
         if (value.length >= 1) {
             value.forEach(elem => {
-                select.appendChild(createNode('option', `${elem} ${key}`, [], [{
+                select.appendChild(createNode('option', `${mayusculaPrimera(elem + ' ' + key)}`, [], [{
                     name: 'value',
                     value: `${key}-${elem}`
                 }]));
             })
         } else {
-            select.appendChild(createNode('option', `${key}`, [], [{
+            select.appendChild(createNode('option', `${mayusculaPrimera(key)}`, [], [{
                 name: 'value',
                 value: `${key}`
             }]));
@@ -184,6 +184,13 @@ function borrarNodosHijos(padre) {
     while (padre.firstChild) {
         padre.removeChild(padre.firstChild);
     }
+}
+/**
+ * Convierte la primera letra de un string a mayúscula.
+ * @param {string} string 
+ */
+function mayusculaPrimera(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 /**
