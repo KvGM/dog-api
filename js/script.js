@@ -1,14 +1,23 @@
-const xml = document.getElementById('xml');
-const fetch = document.getElementById('fetch');
-const jquery = document.getElementById('jquery');
+const optXml = document.getElementById('xml');
+const optFetch = document.getElementById('fetch');
+const optJquery = document.getElementById('jquery');
+const zonaSelect = document.getElementById('selectBusqueda');
+const zonaImg = document.getElementById('resultado')
+const listaPerros = 'https://dog.ceo/api/breeds/list/all';
 
-function cargarXml(web, select) {
+/**
+ * Carga un select o imagen dependiendo del valor del select. XMLHttpRequest
+ * @param {string} web 
+ * @param {boolean} select 
+ */
+async function cargarXml(web, select) {
     let json = new XMLHttpRequest();
     json.addEventListener("readystatechange", () => {
         if (json.readyState === 4 && json.status === 200) {
             let jsonParsed = JSON.parse(json.responseText);
-            if (select == true) {
-                crearSelect(jsonParsed);
+            if (select) {
+                borrarNodosHijos(zonaSelect);
+                crearSelect(jsonParsed, 'xml');
             } else {
                 cargarImagen(jsonParsed);
             }
@@ -17,32 +26,72 @@ function cargarXml(web, select) {
     json.open("GET", web);
     json.send();
 }
-xml.addEventListener('change', function () {
-    cargarXml('https://dog.ceo/api/breeds/list/all', true);
-});
+/**
+ * Carga un select o imagen dependiendo del valor del select. Fetch
+ * @param {string} web 
+ * @param {boolean} select 
+ */
+async function cargarFetch(web, select) {
+    const options = {
+        method: "GET"
+    };
+    await fetch(web, options)
+        .then(response => response.text())
+        .then(data => {
+            let jsonParsed = JSON.parse(data);
+            if (select) {
+                borrarNodosHijos(zonaSelect);
+                crearSelect(jsonParsed, 'fetch');
+            } else {
+                cargarImagen(jsonParsed);
+            }
+        })
+        .catch(error => {
+            console.log(error);
+        })
+}
 
-function crearSelect(json) {
+/**
+ * Carga un select o imagen dependiendo del valor del select. Jquery
+ * @param {string} web 
+ * @param {boolean} select 
+ */
+async function cargarJquery(web, select) {
+    await $.get(web, function (json) {
+        if (select) {
+            borrarNodosHijos(zonaSelect);
+            crearSelect(json, 'jquery');
+        } else {
+            cargarImagen(json);
+        }
+    });
+}
+
+/**
+ * Crea un select con el resultado del json, y el otro parámetro es la forma de request
+ * @param {string} json 
+ * @param {string} metodo 
+ */
+function crearSelect(json, metodo) {
     const elementos = json.message;
     const lista = Object.entries(elementos);
-    const zonaSelect = document.getElementById('selectBusqueda');
-    borrarNodosHijos(zonaSelect);
     let select = createNode('select', '', [], [{
         name: 'id',
         value: 'razas'
     }]);
     zonaSelect.appendChild(select);
-    for (let i = 0; i < lista.length; i++) {
-        if (lista[i][1][0] != undefined) {
-            for (let j = 0; j < lista[i][1].length; j++) {
-                select.appendChild(createNode('option', `${lista[i][1][j]} ${lista[i][0]}`, [], [{
+    for (let [key, value] of lista) {
+        if (value.length >= 1) {
+            value.forEach(elem => {
+                select.appendChild(createNode('option', `${elem} ${key}`, [], [{
                     name: 'value',
-                    value: `${lista[i][0]}-${lista[i][1][j]}`
+                    value: `${key}-${elem}`
                 }]));
-            }
+            })
         } else {
-            select.appendChild(createNode('option', `${lista[i][0]}`, [], [{
+            select.appendChild(createNode('option', `${key}`, [], [{
                 name: 'value',
-                value: `${lista[i][0]}`
+                value: `${key}`
             }]));
         }
     }
@@ -50,10 +99,16 @@ function crearSelect(json) {
         name: 'id',
         value: 'btnBuscar'
     }]);
-    btnBuscar.addEventListener('click', buscarImagen);
+    btnBuscar.addEventListener('click', function () {
+        buscarImagen(metodo)
+    });
     zonaSelect.appendChild(btnBuscar);
 }
 
+/**
+ * Carga la imagen en su zona, siendo json el link de la imagen.
+ * @param {string} json 
+ */
 function cargarImagen(json) {
     const zonaImg = document.getElementById('resultado');
     borrarNodosHijos(zonaImg);
@@ -63,18 +118,50 @@ function cargarImagen(json) {
     }]));
 }
 
-function buscarImagen() {
+/**
+ * Busca la imagen por el valor del option y necesita un parámetro que sería el tipo de request.
+ * @param {string} metodo 
+ */
+function buscarImagen(metodo) {
     let valor = document.getElementById('razas').value;
     valor = valor.split('-');
+    let url;
     if (valor.length > 1) {
-        cargarXml(`https://dog.ceo/api/breed/${valor[0]}/${valor[1]}/images/random`, false);
+        url = `https://dog.ceo/api/breed/${valor[0]}/${valor[1]}/images/random`;
+        switch (metodo) {
+            case 'xml':
+                cargarXml(url, false);
+                break;
+            case 'fetch':
+                cargarFetch(url, false);
+                break;
+            case 'jquery':
+                cargarJquery(url, false);
+                break;
+        }
     } else {
-        //Link por raza
-        cargarXml(`https://dog.ceo/api/breed/${valor}/images/random`, false);
+        url = `https://dog.ceo/api/breed/${valor}/images/random`;
+        switch (metodo) {
+            case 'xml':
+                cargarXml(url, false);
+                break;
+            case 'fetch':
+                cargarFetch(url, false);
+                break;
+            case 'jquery':
+                cargarJquery(url, false);
+                break;
+        }
     }
+
 }
-
-
+/**
+ * Crea nodos con tipo, texto, clases y atributos.
+ * @param {string} nodeType
+ * @param {string} nodeText 
+ * @param {array} nodeClasess 
+ * @param {array} nodeAttributtes 
+ */
 function createNode(nodeType, nodeText, nodeClasess, nodeAttributtes) {
     let node = document.createElement(nodeType);
     if (nodeText != "" && nodeText != null) {
@@ -89,8 +176,25 @@ function createNode(nodeType, nodeText, nodeClasess, nodeAttributtes) {
     return node;
 }
 
+/**
+ * Borra los hijos del padre seleccionado.
+ * @param {string} padre 
+ */
 function borrarNodosHijos(padre) {
     while (padre.firstChild) {
         padre.removeChild(padre.firstChild);
     }
 }
+
+/**
+ * Eventos principales
+ */
+optXml.addEventListener('change', function () {
+    cargarXml(listaPerros, true);
+});
+optFetch.addEventListener('change', function () {
+    cargarFetch(listaPerros, true);
+});
+optJquery.addEventListener('change', function () {
+    cargarJquery(listaPerros, true);
+})

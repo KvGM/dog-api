@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./style/style.css">
+    <link rel="stylesheet" href="./css/style.css">
     <title>Dog API</title>
 </head>
 
@@ -12,27 +12,25 @@
     <header>
         <h2>Dog API Client</h2>
     </header>
-    <form action="#">
-        <div id="consulta">
-            <div class="tipoConsulta">
-                <label for="xml"><input type="radio" name="opcion" id="xml">XMLHttpRequest</label>
-            </div>
-            <div class="tipoConsulta">
-                <label for="fetch"><input type="radio" name="opcion" id="fetch">Fetch</label>
-            </div>
-            <div class="tipoConsulta">
-                <label for="jquery"><input type="radio" name="opcion" id="jquery">Jquery</label>
-            </div>
+    <div id="consulta">
+        <div class="tipoConsulta">
+            <label for="xml"><input type="radio" name="opcion" id="xml">XMLHttpRequest</label>
         </div>
-        <div id="selectBusqueda">
-
+        <div class="tipoConsulta">
+            <label for="fetch"><input type="radio" name="opcion" id="fetch">Fetch</label>
         </div>
-        <div id="resultado">
-
+        <div class="tipoConsulta">
+            <label for="jquery"><input type="radio" name="opcion" id="jquery">Jquery</label>
         </div>
+    </div>
+    <div id="selectBusqueda">
 
-    </form>
+    </div>
+    <div id="resultado">
+
+    </div>
     <script type="module" src="./js/script.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
 </body>
 
 </html>
