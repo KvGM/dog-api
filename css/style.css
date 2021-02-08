@@ -7,8 +7,8 @@
   justify-content: center; }
 
 img {
-  max-height: 600px;
-  width: 700px; }
+  max-height: 500px;
+  max-width: 600px; }
 
 #selectBusqueda {
   margin-top: 10px;
